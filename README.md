@@ -1,0 +1,1 @@
+# Priceloop Data Connector

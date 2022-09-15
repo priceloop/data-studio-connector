@@ -1,0 +1,26 @@
+{
+  "timeZone": "Europe/Berlin",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "OAuth2",
+        "version": "41",
+        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF"
+      }
+    ]
+  },
+  "dataStudio": {
+    "name": "Priceloop Data Connector",
+    "logoUrl": "https://avatars.githubusercontent.com/u/72747191",
+    "company": "Priceloop",
+    "companyUrl": "https://priceloop.ai/",
+    "addonUrl": "https://priceloop.ai/",
+    "supportUrl": "https://priceloop.ai/",
+    "shortDescription": "Priceloop Data Connector",
+    "description": "Connect Data Studio with your Priceloop Data",
+    "authType": ["OAUTH2"],
+    "feeType": ["FREE"]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}
