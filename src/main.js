@@ -6,6 +6,10 @@
 
 const cc = DataStudioApp.createCommunityConnector();
 
+const nocodeStageName = "dev-pr-1017"
+const nocodeHostName = "pr-1017.dyn.alpha-dev.priceloop.ai"
+const nocodeAuthClientId = "5e0vnm361cp75j0t1jl9oisprt"
+
 function throwDebugError(message) {
   cc.newDebugError()
     .setText(message)
@@ -55,10 +59,10 @@ function get3PAuthorizationUrls() {
 function getConfig() {
   const config = cc.getConfig();
 
-  const url = `https://api.pr-1017.dyn.alpha-dev.priceloop.ai/api/v1.0/workspaces`;
+  const url = `https://api.${nocodeHostName}/api/v1.0/workspaces`;
   const workspaceNames = fetchJSON(url);
   const workspaceTableNames = workspaceNames.map(workspaceName => {
-    const url = `https://api.pr-1017.dyn.alpha-dev.priceloop.ai/api/v1.0/workspaces/${workspaceName}`;
+    const url = `https://api.${nocodeHostName}/api/v1.0/workspaces/${workspaceName}`;
     const workspace = fetchJSON(url);
 
     return workspace.tables.map(table => `${workspace.name}/${table.name}`);
@@ -97,7 +101,7 @@ function getFields(request) {
   // const aggregations = cc.AggregationType;
 
   const [workspaceName, tableName] = request.configParams.workspaceTable.split('/');
-  const url = `https://api.pr-1017.dyn.alpha-dev.priceloop.ai/api/v1.0/workspaces/${workspaceName}/tables/${tableName}`;
+  const url = `https://api.${nocodeHostName}/api/v1.0/workspaces/${workspaceName}/tables/${tableName}`;
   const table = fetchJSON(url); //fetchData(url, request.configParams.cache);
 
   table.columns.forEach((column, idx) => {
@@ -120,7 +124,7 @@ function getFields(request) {
       fields.newDimension()
         .setId("" + (idx + 1))
         .setName(column.name)
-        .setType(types.YEAR_MONTH_DAY_SECOND);
+        .setType(types.YEAR_MONTH_DAY_SECOND); // precision to seconds expected: <year><month><day><hours><minutes><seconds>
     } else {
       throwUserError("Unexpected type in column '${column.name}'.", column.tpe);
     }
@@ -145,7 +149,7 @@ function getData(request) {
   const [workspaceName, tableName] = request.configParams.workspaceTable.split('/');
 
   const pageSize = 500;
-  const urlByOffset = offset => `https://api.pr-1017.dyn.alpha-dev.priceloop.ai/api/v1.0/workspaces/${workspaceName}/tables/${tableName}/data?offset=${offset+pageSize}&limit=${pageSize}`;
+  const urlByOffset = offset => `https://api.${nocodeHostName}/api/v1.0/workspaces/${workspaceName}/tables/${tableName}/data?offset=${offset+pageSize}&limit=${pageSize}`;
 
   var allDataRows = [];
   var currentOffset = 0;
@@ -185,12 +189,12 @@ function getOAuthService() {
       .setPropertyStore(PropertiesService.getUserProperties())
       .setCache(CacheService.getUserCache())
       .setLock(LockService.getUserLock())
-      .setAuthorizationBaseUrl('https://auth.pr-1017.dyn.alpha-dev.priceloop.ai/login')
-      .setTokenUrl('https://auth.pr-1017.dyn.alpha-dev.priceloop.ai/oauth2/token')
-      .setClientId('5e0vnm361cp75j0t1jl9oisprt')
-      .setClientSecret('_')
+      .setAuthorizationBaseUrl(`https://auth.${nocodeHostName}/login`)
+      .setTokenUrl(`https://auth.${nocodeHostName}/oauth2/token`)
+      .setClientId(nocodeAuthClientId)
+      .setClientSecret('_') // OAuth2 library says that clientSecret is required, but we do not have one in our app client in aws cognito. Empty string does not work, so put in anything.
       .setCallbackFunction('authCallback')
-      .setScope('aws.cognito.signin.user.admin nocode-dev-pr-1017-auth-user-api/api openid email')
+      .setScope(`aws.cognito.signin.user.admin nocode-${nocodeStageName}-auth-user-api/api openid email`)
 };
 
 function fetchJSON(url) {
