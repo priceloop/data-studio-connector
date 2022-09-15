@@ -2,7 +2,8 @@
 // json example: https://raw.githubusercontent.com/googledatastudio/community-connectors/master/JSON-connect/src/main.js
 // auth tutorial: https://developers.google.com/datastudio/connector/auth#oauth2_1
 // oauth2-library: https://github.com/googleworkspace/apps-script-oauth2
-// types: https://developers.google.com/datastudio/connector/reference
+// connector reference: https://developers.google.com/datastudio/connector/reference
+// apps script reference: https://developers.google.com/apps-script/reference/data-studio
 
 const cc = DataStudioApp.createCommunityConnector();
 
