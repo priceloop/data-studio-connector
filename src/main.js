@@ -195,7 +195,7 @@ function getOAuthService() {
       .setClientId(nocodeAuthClientId)
       .setClientSecret('_') // OAuth2 library says that clientSecret is required, but we do not have one in our app client in aws cognito. Empty string does not work, so put in anything.
       .setCallbackFunction('authCallback')
-      .setScope(`aws.cognito.signin.user.admin nocode-${nocodeStageName}-auth-user-api/api openid email`)
+      .setScope(`nocode-${nocodeStageName}-auth-user-api/api email`)
 };
 
 function fetchJSON(url) {
