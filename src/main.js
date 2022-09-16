@@ -105,30 +105,56 @@ function getFields(request) {
   const url = `https://api.${nocodeHostName}/api/v1.0/workspaces/${workspaceName}/tables/${tableName}`;
   const table = fetchJSON(url); //fetchData(url, request.configParams.cache);
 
-  table.columns.forEach((column, idx) => {
-    if (column.tpe.CtString) {
-      fields.newDimension()
-        .setId("" + (idx + 1))
-        .setName(column.name)
-        .setType(types.TEXT);
-    } else if (column.tpe.CtNumber) {
-      fields.newMetric()
-        .setId("" + (idx + 1))
-        .setName(column.name)
-        .setType(types.NUMBER);
-    } else if (column.tpe.CtBoolean) {
-      fields.newDimension()
-        .setId("" + (idx + 1))
-        .setName(column.name)
-        .setType(types.BOOLEAN);
-    } else if (column.tpe.CtDate) {
-      fields.newDimension()
-        .setId("" + (idx + 1))
-        .setName(column.name)
-        .setType(types.YEAR_MONTH_DAY_SECOND); // precision to seconds expected: <year><month><day><hours><minutes><seconds>
-    } else {
-      throwUserError(`Unexpected type in column '${column.name}': ${JSON.stringify(column.tpe)}`);
+  function setupColumnType(typeName, columnId, columnName) {
+    switch(typeName) {
+      case "number":
+        fields.newMetric()
+          .setId(columnId)
+          .setName(columnName)
+          .setType(types.NUMBER);
+        break;
+
+      case "string":
+        fields.newDimension()
+          .setId(columnId)
+          .setName(columnName)
+          .setType(types.TEXT);
+        break;
+
+      case "boolean":
+        fields.newDimension()
+          .setId(columnId)
+          .setName(columnName)
+          .setType(types.BOOLEAN);
+        break;
+
+      case "date":
+        fields.newDimension()
+          .setId(columnId)
+          .setName(columnName)
+          .setType(types.YEAR_MONTH_DAY_SECOND); // precision to seconds expected: <year><month><day><hours><minutes><seconds>
+        break;
+
+      case "null":
+        fields.newDimension()
+          .setId(columnId)
+          .setName(columnName)
+          .setType(types.TEXT);
+        break;
+
+      default:
+        throwUserError(`Unexpected type for column '${columnName}': ${typeName}`);
     }
+  }
+
+  table.columns.forEach((column, idx) => {
+    const columnId = "" + (idx + 1) // idx + 1 because, the first column in the data result from our api is the priceloop_id (index 0). and id has to be a string.
+    if (column.tpe.CtString) setupColumnType("string", columnId, column.name)
+    else if (column.tpe.CtNumber) setupColumnType("number", columnId, column.name)
+    else if (column.tpe.CtBoolean) setupColumnType("boolean", columnId, column.name)
+    else if (column.tpe.CtDate) setupColumnType("date", columnId, column.name)
+    else if (column.tpe.CtFormula) setupColumnType(column.tpe.CtFormula.expression.typ, columnId, column.name)
+    else throwUserError(`Unexpected column type '${column.name}': ${JSON.stringify(column.tpe)}`);
   });
 
   return fields;
