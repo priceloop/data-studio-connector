@@ -7,9 +7,9 @@
 
 const cc = DataStudioApp.createCommunityConnector();
 
-const nocodeStageName = "dev-pr-1017"
-const nocodeHostName = "pr-1017.dyn.alpha-dev.priceloop.ai"
-const nocodeAuthClientId = "5e0vnm361cp75j0t1jl9oisprt"
+const nocodeStageName = "dev"
+const nocodeHostName = "alpha-dev.priceloop.ai"
+const nocodeAuthClientId = "6mak116c1chfua7kamldogrvsa"
 
 function throwDebugError(message) {
   cc.newDebugError()
