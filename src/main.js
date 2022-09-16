@@ -238,8 +238,10 @@ function fetchJSON(url) {
   }
 }
 
-function convertDate(val) {
-  const date = new Date(val);
+function convertDate(dateString) {
+  if (dateString == null) return null;
+
+  const date = new Date(dateString);
   return (
     date.getUTCFullYear() +
     ('0' + (date.getUTCMonth() + 1)).slice(-2) +
