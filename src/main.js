@@ -127,7 +127,7 @@ function getFields(request) {
         .setName(column.name)
         .setType(types.YEAR_MONTH_DAY_SECOND); // precision to seconds expected: <year><month><day><hours><minutes><seconds>
     } else {
-      throwUserError("Unexpected type in column '${column.name}'.", column.tpe);
+      throwUserError(`Unexpected type in column '${column.name}': ${JSON.stringify(column.tpe)}`);
     }
   });
 
