@@ -7,9 +7,15 @@
 
 const cc = DataStudioApp.createCommunityConnector();
 
-const nocodeStageName = "dev"
-const nocodeHostName = "alpha-dev.priceloop.ai"
-const nocodeAuthClientId = "6mak116c1chfua7kamldogrvsa"
+const nocodeHostName = "pr-1039.dyn.alpha-dev.priceloop.ai"
+
+const nocodeConfig = loadAppConfig();
+
+function loadAppConfig() {
+  const url = `https://${nocodeHostName}/app_config.json`;
+  const nocodeConfig = fetchJSON(url, false)
+  return nocodeConfig;
+}
 
 function throwDebugError(message) {
   cc.newDebugError()
@@ -149,12 +155,7 @@ function getFields(request) {
 
   table.columns.forEach((column, idx) => {
     const columnId = "" + (idx + 1) // idx + 1 because, the first column in the data result from our api is the priceloop_id (index 0). and id has to be a string.
-    if (column.tpe.CtString) setupColumnType("string", columnId, column.name)
-    else if (column.tpe.CtNumber) setupColumnType("number", columnId, column.name)
-    else if (column.tpe.CtBoolean) setupColumnType("boolean", columnId, column.name)
-    else if (column.tpe.CtDate) setupColumnType("date", columnId, column.name)
-    else if (column.tpe.CtFormula) setupColumnType(column.tpe.CtFormula.expression.typ, columnId, column.name)
-    else throwUserError(`Unexpected column type '${column.name}': ${JSON.stringify(column.tpe)}`);
+    setupColumnType(column.tpe, columnId, column.name);
   });
 
   return fields;
@@ -218,18 +219,18 @@ function getOAuthService() {
       .setLock(LockService.getUserLock())
       .setAuthorizationBaseUrl(`https://auth.${nocodeHostName}/login`)
       .setTokenUrl(`https://auth.${nocodeHostName}/oauth2/token`)
-      .setClientId(nocodeAuthClientId)
+      .setClientId(nocodeConfig.auth.clientId)
       .setClientSecret('_') // OAuth2 library says that clientSecret is required, but we do not have one in our app client in aws cognito. Empty string does not work, so put in anything.
       .setCallbackFunction('authCallback')
-      .setScope(`nocode-${nocodeStageName}-auth-user-api/api email`)
+      .setScope(`${nocodeConfig.auth.apiScopes} email`)
 };
 
-function fetchJSON(url) {
+function fetchJSON(url, authorized = true) {
   try {
     const response = UrlFetchApp.fetch(url, {
-      headers: {
+      headers: authorized ? {
         Authorization: 'Bearer ' + getOAuthService().getAccessToken()
-      }
+      } : undefined
     });
     const content = JSON.parse(response);
     return content;
