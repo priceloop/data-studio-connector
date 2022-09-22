@@ -7,7 +7,7 @@
 
 const cc = DataStudioApp.createCommunityConnector();
 
-const nocodeHostName = "pr-1039.dyn.alpha-dev.priceloop.ai"
+const nocodeHostName = "alpha.priceloop.ai"
 
 const nocodeConfig = loadAppConfig();
 
