@@ -21,3 +21,10 @@ clasp push
 ```
 clasp deploy
 ```
+
+## Get Link for newest deployment
+
+```
+echo "https://datastudio.google.com/datasources/create?connectorId=$(clasp deployments | tail -n 1 | cut -d ' ' -f 2)&authuser=0"
+
+```
