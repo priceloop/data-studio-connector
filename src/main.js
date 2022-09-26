@@ -177,7 +177,7 @@ function getData(request) {
   const [workspaceName, tableName] = request.configParams.workspaceTable.split('/');
 
   const pageSize = 500;
-  const urlByOffset = offset => `https://api.${nocodeHostName}/api/v1.0/workspaces/${workspaceName}/tables/${tableName}/data?offset=${offset+pageSize}&limit=${pageSize}`;
+  const urlByOffset = offset => `https://api.${nocodeHostName}/api/v1.0/workspaces/${workspaceName}/tables/${tableName}/data?offset=${offset*pageSize}&limit=${pageSize}`;
 
   var allDataRows = [];
   var currentOffset = 0;
@@ -203,7 +203,7 @@ function getData(request) {
 
     allDataRows.push(...dataRows)
 
-    currentOffset += pageSize;
+    currentOffset++;
   }
 
   return {
