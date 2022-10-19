@@ -15,9 +15,9 @@
     "company": "Priceloop",
     "companyUrl": "https://priceloop.ai/",
     "addonUrl": "https://priceloop.ai/",
-    "supportUrl": "https://priceloop.ai/",
+    "supportUrl": "https://join.slack.com/t/priceloopcommunity/shared_invite/zt-1hdhcmsoy-Kr_5mdj3UGgbE8ziCFGnjg",
     "shortDescription": "Priceloop Data Connector",
-    "description": "Connect Data Studio with your Priceloop Data",
+    "description": "Connect Data Studio with your Priceloop Account",
     "authType": ["OAUTH2"],
     "feeType": ["FREE"]
   },
